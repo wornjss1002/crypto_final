@@ -8,9 +8,8 @@ import type { JWT } from 'next-auth/jwt'
 const SECRET = process.env.NEXTAUTH_SECRET!
 
 export async function GET(request: NextRequest) {
-  const token = (await getToken({ req: request, secret: SECRET })) as JWT | null
-
-  if (!token || !token.uid || !token.email) {
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  if (!token || !token.id || !token.email) {
     return NextResponse.json({ message: '인증 필요' }, { status: 401 })
   }
 
@@ -33,9 +32,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const token = (await getToken({ req: request, secret: SECRET })) as JWT | null
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
 
-  if (!token || !token.uid || !token.email) {
+  if (!token || !token.id || !token.email) {
     return NextResponse.json({ message: '인증 필요' }, { status: 401 })
   }
 
@@ -52,7 +51,7 @@ export async function POST(request: NextRequest) {
     await dbConnect()
 
     const capsule = await CapsuleModel.create({
-      senderId: token.uid,
+      senderId: token.id,
       recipientEmail,
       content,
       viewDate: new Date(viewDate),
