@@ -2,15 +2,18 @@
 import Link from 'next/link'
 import LoginForm from '@/components/LoginForm'
 import { useState } from 'react'
+import { signOut, useSession } from 'next-auth/react'
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { data: session } = useSession()
 
   return (
     <nav className="flex justify-between items-center px-4 sm:px-8 py-2 border-b-8 border-double border-b-black dark:border-b-white">
+      {/* 좌측 로고 + 드롭다운 메뉴 */}
       <div className="flex items-center">
-        {/* 모바일 토글 버튼 */}
+        {/* 모바일 메뉴 토글 */}
         <button
           className="lg:hidden mr-2"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -34,7 +37,7 @@ export default function Navbar() {
           </svg>
         </button>
 
-        {/* 데스크탑 드롭다운 */}
+        {/* 드롭다운 포함 데스크탑 로고 */}
         <div
           className="relative hidden lg:block"
           onMouseEnter={() => setIsDropdownOpen(true)}
@@ -42,10 +45,11 @@ export default function Navbar() {
         >
           <Link
             href="/"
-            className="text-2xl sm:text-3xl lg:text-4xl font-extrabold hover:opacity-75 block"
+            className="text-2xl sm:text-3xl font-extrabold hover:opacity-75 block"
           >
             Time Capsule
           </Link>
+
           <div
             className={`absolute top-full left-0 w-48 bg-white dark:bg-black shadow-lg rounded-md transition-all duration-300 ease-in-out transform origin-top z-50 ${
               isDropdownOpen
@@ -56,24 +60,24 @@ export default function Navbar() {
             <ul className="py-2">
               <li>
                 <Link
-                  href="/TimeCapsulePage"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-black dark:hover:text-white/75 whitespace-nowrap"
+                  href="/capsules/sent"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-black dark:hover:text-white/75"
                 >
-                  타임캡슐 게시판
+                  내가 보낸 캡슐
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/RecommendPage"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-black dark:hover:text-white/75 whitespace-nowrap"
+                  href="/capsules/received"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-black dark:hover:text-white/75"
                 >
-                  추천 게시판
+                  내게 도착한 캡슐
                 </Link>
               </li>
               <li>
                 <Link
                   href="/about"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-black dark:hover:text-white/75 whitespace-nowrap"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-black dark:hover:text-white/75"
                 >
                   팀 소개
                 </Link>
@@ -82,7 +86,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* 모바일 로고 */}
+        {/* 모바일용 로고 */}
         <Link
           href="/"
           className="text-2xl sm:text-3xl lg:hidden font-extrabold hover:opacity-75"
@@ -91,18 +95,37 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* 우측 영역: 로그인 폼 + Sign In 버튼 */}
+      {/* 우측 로그인/로그아웃 */}
       <div className="flex items-center space-x-4">
-        <LoginForm />
-        <Link
-          href="/register"
-          className="bg-black text-white dark:bg-white dark:text-black text-base sm:text-lg font-bold px-3 py-1 sm:px-4 sm:py-2 rounded-md hover:bg-black/75 dark:hover:bg-white/75"
-        >
-          Sign In
-        </Link>
+        {session ? (
+          <>
+            <Link
+              href="/dashboard"
+              className="bg-black text-white dark:bg-white dark:text-black text-base sm:text-lg font-bold px-3 py-1 sm:px-4 sm:py-2 rounded-md hover:bg-black/75 dark:hover:bg-white/75"
+            >
+              Dashboard
+            </Link>
+            <button
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className="bg-black text-white dark:bg-white dark:text-black text-base sm:text-lg font-bold px-3 py-1 sm:px-4 sm:py-2 rounded-md hover:bg-black/75 dark:hover:bg-white/75"
+            >
+              Sign Out
+            </button>
+          </>
+        ) : (
+          <>
+            <LoginForm />
+            <Link
+              href="/register"
+              className="bg-black text-white dark:bg-white dark:text-black text-base sm:text-lg font-bold px-3 py-1 sm:px-4 sm:py-2 rounded-md hover:bg-black/75 dark:hover:bg-white/75"
+            >
+              Sign In
+            </Link>
+          </>
+        )}
       </div>
 
-      {/* 모바일 메뉴: 게시판 링크만 */}
+      {/* 모바일 메뉴 */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300 ${
           isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -117,18 +140,18 @@ export default function Navbar() {
         >
           <div className="p-4 space-y-2">
             <Link
-              href="/TimeCapsulePage"
+              href="/capsules/sent"
               className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-black dark:hover:text-white/75"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              타임캡슐 게시판
+              내가 보낸 캡슐
             </Link>
             <Link
-              href="/RecommendPage"
+              href="/capsules/received"
               className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-black dark:hover:text-white/75"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              추천 게시판
+              내게 도착한 캡슐
             </Link>
             <Link
               href="/about"
