@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/libs/mongodb'
 import CapsuleModel from '@/models/capsule'
 import { getToken } from 'next-auth/jwt'
-import type { JWT } from 'next-auth/jwt'
 
 const SECRET = process.env.NEXTAUTH_SECRET!
 
@@ -16,7 +15,7 @@ export async function GET(request: NextRequest) {
   try {
     await dbConnect()
 
-    const sent = await CapsuleModel.find({ senderId: token.uid })
+    const sent = await CapsuleModel.find({ senderId: token.id })
 
     const now = new Date()
     const received = await CapsuleModel.find({

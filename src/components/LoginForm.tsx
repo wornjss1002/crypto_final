@@ -12,13 +12,6 @@ export default function LoginForm() {
           {status === 'authenticated' ? (
             <>
               <div className="flex gap-2 items-center mr-2">
-                <Image
-                  className="rounded-full"
-                  src={session?.user?.image ?? '/default-avatar.png'}
-                  width={40}
-                  height={40}
-                  alt={session?.user?.name ?? 'user'}
-                />
                 <a href="/dashboard" className=" font-bold hover:">
                   {session?.user?.name}
                 </a>
