@@ -1,7 +1,8 @@
-import NextAuth from 'next-auth'
+// src/auth.ts
+import { getServerSession } from 'next-auth'
+import { type NextAuthOptions } from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
-import type { NextAuthOptions } from 'next-auth'
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -40,4 +41,4 @@ export const authOptions: NextAuthOptions = {
   },
 }
 
-export const { auth, signIn, signOut } = NextAuth(authOptions)
+export const auth = () => getServerSession(authOptions)
