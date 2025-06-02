@@ -50,7 +50,7 @@ export default async function RootLayout({
                   </div>
                 </main>
                 <footer className="text-center text-sm text-gray-500 py-4">
-                  © 2025 웹이추. JBU Web Security Project. aas
+                  © 2025 웹이추. JBU Web Security Project.
                 </footer>
               </div>
             </div>

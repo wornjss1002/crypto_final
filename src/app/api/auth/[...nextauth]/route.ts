@@ -1,2 +1,62 @@
-import { handlers } from '@/auth' // Referring to the auth.ts we just created
-export const { GET, POST } = handlers
+import NextAuth from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import dbConnect from '@/libs/mongodb'
+import UserModel from '@/models/user'
+import { verifyPassword } from '@/libs/auth'
+
+const handler = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
+  providers: [
+    CredentialsProvider({
+      name: 'Email',
+      credentials: {
+        email: { label: 'Email', type: 'text' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials) {
+        await dbConnect()
+        if (!credentials?.email || !credentials.password) {
+          throw new Error('이메일과 비밀번호를 입력해주세요.')
+        }
+        const user = await UserModel.findOne({ email: credentials.email })
+        if (!user) throw new Error('사용자를 찾을 수 없습니다.')
+        const isValid = await verifyPassword(
+          credentials.password,
+          user.passwordHash
+        )
+        if (!isValid) throw new Error('비밀번호가 일치하지 않습니다.')
+
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+        }
+      },
+    }),
+  ],
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.uid = user.id
+        token.email = user.email
+      }
+      return token
+    },
+    async session({ session, token }) {
+      ;(session.user as any).id = (token as any).uid(
+        session.user as any
+      ).email = (token as any).email
+      return session
+    },
+  },
+  pages: {
+    signIn: '/login',
+    error: '/login?error',
+  },
+})
+
+export { handler as GET, handler as POST }
