@@ -45,9 +45,7 @@ export default function LoginPage() {
         <h2 className="text-xl font-semibold text-center">로그인</h2>
 
         {(errorQuery || error) && (
-          <p className="text-red-600 text-center">
-            {error || errorQuery}
-          </p>
+          <p className="text-red-600 text-center">{error || errorQuery}</p>
         )}
 
         <div>

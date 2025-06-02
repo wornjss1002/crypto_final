@@ -1,4 +1,5 @@
-import { auth } from '@/auth'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/auth'
 import { getAllData } from '@/actions/dataActions'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -6,16 +7,31 @@ import { HiPencilAlt } from 'react-icons/hi'
 import RemoveBtn_Data from '@/components/RemoveBtn_Data'
 
 export default async function DashboardPage() {
-  const session = await auth()
+  const session = await getServerSession(authOptions)
   const { datas } = await getAllData()
 
-  if (!session) return <div className="text-2xl">로그인이 필요합니다...</div>
+  if (!session) {
+    return <div className="text-2xl">로그인이 필요합니다...</div>
+  }
 
   // 현재 사용자가 작성한 글만 필터링
   const myPosts = datas.filter((data) => data.userEmail === session.user?.email)
 
   return (
-    <div className="space-y-8">
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">대시보드</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {datas.map((data) => (
+          <div
+            key={data._id}
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+          >
+            <h2 className="text-xl font-semibold mb-2">{data.title}</h2>
+            <p className="text-gray-600">{data.description}</p>
+          </div>
+        ))}
+      </div>
+
       {/* 사용자 프로필 섹션 */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
         <div className="flex items-center space-x-4">

@@ -75,7 +75,7 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.message || '회원가입 실패')
+        throw new Error(data.error || '회원가입 실패')
       }
 
       router.push('/login')

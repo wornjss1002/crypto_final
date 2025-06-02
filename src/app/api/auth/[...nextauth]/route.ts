@@ -2,13 +2,13 @@
 
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
+import GitHubProvider from 'next-auth/providers/github'
 import dbConnect from '@/libs/mongodb'
 import UserModel from '@/models/user'
 import { verifyPassword } from '@/libs/auth'
 
-
 const handler = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'Email',
@@ -17,19 +17,24 @@ const handler = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        await dbConnect()
-        if (!credentials?.email || !credentials.password) {
+        if (!credentials?.email || !credentials?.password) {
           throw new Error('이메일과 비밀번호를 입력해주세요.')
         }
 
+        await dbConnect()
+
         const user = await UserModel.findOne({ email: credentials.email })
-        if (!user) throw new Error('사용자를 찾을 수 없습니다.')
+        if (!user) {
+          throw new Error('등록되지 않은 이메일입니다.')
+        }
 
         const isValid = await verifyPassword(
           credentials.password,
           user.passwordHash
         )
-        if (!isValid) throw new Error('비밀번호가 일치하지 않습니다.')
+        if (!isValid) {
+          throw new Error('비밀번호가 일치하지 않습니다.')
+        }
 
         return {
           id: user._id.toString(),
@@ -38,39 +43,40 @@ const handler = NextAuth({
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
   ],
-  session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60,
+  pages: {
+    signIn: '/login',
+    error: '/login',
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        return {
-          ...token,
-          uid: user.id,
-          email: user.email,
-        }
+        token.id = user.id
+        token.email = user.email
       }
       return token
     },
     async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: (token as any).uid,
-          email: (token as any).email,
-        },
+      if (session.user) {
+        session.user.id = token.id as string
+        session.user.email = token.email as string
       }
+      return session
     },
   },
-  pages: {
-    signIn: '/login',
-    error: '/login?error',
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+  secret: process.env.NEXTAUTH_SECRET,
 })
 
-export { default as GET, default as POST } from '@/auth'
-
-
+export { handler as GET, handler as POST }

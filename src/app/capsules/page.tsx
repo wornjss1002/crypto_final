@@ -3,25 +3,39 @@ import React from 'react'
 import Layout from '@/components/Layout'
 import CapsuleCard, { Capsule } from '@/components/CapsuleCard'
 import { headers } from 'next/headers'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/auth'
 
 export default async function CapsulesPage() {
-  const host = headers().get('host')
+  const headersList = headers()
+  const host = headersList.get('host')
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
   const baseUrl = `${protocol}://${host}`
+
+  const session = await getServerSession(authOptions)
+
+  if (!session) {
+    return <div className="text-2xl">로그인이 필요합니다...</div>
+  }
 
   let sent: Capsule[] = []
   let received: Capsule[] = []
 
   try {
-    const res = await fetch(`${baseUrl}/api/capsules`, { cache: 'no-store' })
+    const response = await fetch(`${baseUrl}/api/capsules`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    })
 
-    if (!res.ok) {
-      console.error('캡슐 데이터를 불러오지 못했습니다:', res.statusText)
-    } else {
-      const data = await res.json()
-      sent = data.sent || []
-      received = data.received || []
+    if (!response.ok) {
+      throw new Error('캡슐 데이터를 불러오지 못했습니다.')
     }
+
+    const data = await response.json()
+    sent = data.sent || []
+    received = data.received || []
   } catch (error) {
     console.error('캡슐 API 요청 실패:', error)
   }
