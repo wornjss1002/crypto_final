@@ -1,25 +1,19 @@
 import NextAuth from 'next-auth'
-import GitHub from 'next-auth/providers/github'
-import Google from 'next-auth/providers/google'
+import GitHubProvider from 'next-auth/providers/github'
+import GoogleProvider from 'next-auth/providers/google'
+import type { NextAuthOptions } from 'next-auth'
 
-declare module 'next-auth' {
-  interface User {
-    createdAt?: Date
-  }
-}
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
-    Google({
+    GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    GitHub({
+    GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
   ],
-
   pages: {
     signIn: '/login',
   },
@@ -35,16 +29,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
             body: JSON.stringify({ user, account }),
           })
-          if (res.ok) {
-            return true
-          }
-          return false
+          return res.ok
         } catch (error) {
-          console.log(error)
+          console.error('[Auth Callback Error]', error)
           return false
         }
       }
       return true
     },
   },
-})
+}
+
+export default NextAuth(authOptions)

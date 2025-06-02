@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -21,9 +22,21 @@ export default function NewCapsulePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     // 유효성 검사
-    if (!form.recipientEmail || !form.content || !form.viewDate) {
+    const { recipientEmail, content, viewDate } = form
+    if (!recipientEmail || !content || !viewDate) {
       setError('모든 항목을 입력해주세요.')
+      return
+    }
+
+    // 공개일이 과거인지 확인
+    const selectedDate = new Date(viewDate)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    if (selectedDate < today) {
+      setError('공개일은 오늘 이후여야 합니다.')
       return
     }
 
@@ -34,16 +47,13 @@ export default function NewCapsulePage() {
       const res = await fetch('/api/capsules', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recipientEmail: form.recipientEmail,
-          content: form.content,
-          viewDate: form.viewDate,
-        }),
+        body: JSON.stringify(form),
       })
+
       const data = await res.json()
+
       if (!res.ok) throw new Error(data.message || '캡슐 발송 실패')
 
-      // 성공 시 캡슐 목록 페이지로 이동
       router.push('/capsules')
     } catch (err: any) {
       setError(err.message)

@@ -3,7 +3,8 @@ import localFont from 'next/font/local'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import { NextAuthProvider } from '@/components/Providers'
-import { auth } from '@/auth'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/auth' // auth.ts에서 export된 authOptions 가져옴
 
 const geistSans = localFont({
   src: './fonts/DungGeunMo.woff',
@@ -21,31 +22,29 @@ export const metadata: Metadata = {
   description: 'Create, Read, Update, and Delete in MongoDB',
   icons: {
     icon: '/favicon.ico',
-    // 선택적으로 다양한 크기의 아이콘 추가 가능
     shortcut: '/favicon-16x16.png',
   },
 }
 
 export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
-  const session = await auth()
+}) {
+  const session = await getServerSession(authOptions)
 
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-[family-name:var(--font-geist-mono)] `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-[family-name:var(--font-geist-mono)]`}
       >
         <NextAuthProvider session={session}>
           <Navbar />
           <div className="flex justify-between items-start gap-4">
-            {/* 메인 콘텐츠 */}
             <div className="flex-1 max-w-4xl mx-auto px-2 sm:px-0 lg:px-0 py-10">
               <div className="space-y-8">
                 <main>
-                  <div className=" rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-4">{children}</div>
                   </div>
                 </main>

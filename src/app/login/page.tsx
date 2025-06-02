@@ -1,30 +1,39 @@
-// src/app/login/page.tsx
 'use client'
+
 import React, { useState, ChangeEvent, FormEvent } from 'react'
 import Layout from '@/components/Layout'
 import { signIn } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const searchParams = useSearchParams()
   const errorQuery = searchParams?.get('error')
+  const router = useRouter()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
-    // 자동 리다이렉트: 로그인 성공 시 /capsules 로
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       email,
       password,
+      redirect: false,
       callbackUrl: '/capsules',
     })
-    // signIn(…) 호출 후 자동 리디렉션되므로, 여기서 router.push는 불필요합니다.
+
+    if (result?.error) {
+      setError('로그인 실패: ' + result.error)
+    } else if (result?.url) {
+      router.push(result.url)
+    }
+
+    setLoading(false)
   }
 
   return (
@@ -35,7 +44,11 @@ export default function LoginPage() {
       >
         <h2 className="text-xl font-semibold text-center">로그인</h2>
 
-        {errorQuery && <p className="text-red-600 text-center">{errorQuery}</p>}
+        {(errorQuery || error) && (
+          <p className="text-red-600 text-center">
+            {error || errorQuery}
+          </p>
+        )}
 
         <div>
           <label className="block mb-1">이메일</label>

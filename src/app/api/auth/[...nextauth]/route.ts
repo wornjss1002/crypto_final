@@ -1,8 +1,11 @@
+// src/app/api/auth/[...nextauth]/route.ts
+
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import dbConnect from '@/libs/mongodb'
 import UserModel from '@/models/user'
 import { verifyPassword } from '@/libs/auth'
+
 
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -18,8 +21,10 @@ const handler = NextAuth({
         if (!credentials?.email || !credentials.password) {
           throw new Error('이메일과 비밀번호를 입력해주세요.')
         }
+
         const user = await UserModel.findOne({ email: credentials.email })
         if (!user) throw new Error('사용자를 찾을 수 없습니다.')
+
         const isValid = await verifyPassword(
           credentials.password,
           user.passwordHash
@@ -41,16 +46,23 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.uid = user.id
-        token.email = user.email
+        return {
+          ...token,
+          uid: user.id,
+          email: user.email,
+        }
       }
       return token
     },
     async session({ session, token }) {
-      ;(session.user as any).id = (token as any).uid(
-        session.user as any
-      ).email = (token as any).email
-      return session
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: (token as any).uid,
+          email: (token as any).email,
+        },
+      }
     },
   },
   pages: {
@@ -59,4 +71,6 @@ const handler = NextAuth({
   },
 })
 
-export { handler as GET, handler as POST }
+export { default as GET, default as POST } from '@/auth'
+
+

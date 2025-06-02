@@ -1,17 +1,30 @@
+// src/app/capsules/page.tsx
 import React from 'react'
 import Layout from '@/components/Layout'
 import CapsuleCard, { Capsule } from '@/components/CapsuleCard'
 import { headers } from 'next/headers'
 
 export default async function CapsulesPage() {
-  // 런타임 호스트 & 프로토콜 설정
   const host = headers().get('host')
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
   const baseUrl = `${protocol}://${host}`
 
-  // 절대 URL로 데이터 가져오기
-  const res = await fetch(`${baseUrl}/api/capsules`, { cache: 'no-store' })
-  const { sent, received } = await res.json()
+  let sent: Capsule[] = []
+  let received: Capsule[] = []
+
+  try {
+    const res = await fetch(`${baseUrl}/api/capsules`, { cache: 'no-store' })
+
+    if (!res.ok) {
+      console.error('캡슐 데이터를 불러오지 못했습니다:', res.statusText)
+    } else {
+      const data = await res.json()
+      sent = data.sent || []
+      received = data.received || []
+    }
+  } catch (error) {
+    console.error('캡슐 API 요청 실패:', error)
+  }
 
   return (
     <Layout title="나의 타임캡슐">
