@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/auth'
-import { getAllData } from '@/actions/dataActions'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HiPencilAlt } from 'react-icons/hi'
@@ -8,28 +7,16 @@ import RemoveBtn_Data from '@/components/RemoveBtn_Data'
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
-  const { datas } = await getAllData()
 
   if (!session) {
     return <div className="text-2xl">로그인이 필요합니다...</div>
   }
 
-  // 현재 사용자가 작성한 글만 필터링
-  const myPosts = datas.filter((data) => data.userEmail === session.user?.email)
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">대시보드</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {datas.map((data) => (
-          <div
-            key={data._id}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-          >
-            <h2 className="text-xl font-semibold mb-2">{data.title}</h2>
-            <p className="text-gray-600">{data.description}</p>
-          </div>
-        ))}
+        {/* datas.map 등 모두 제거 */}
       </div>
 
       {/* 사용자 프로필 섹션 */}
@@ -57,15 +44,11 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
           <h3 className="text-lg font-semibold mb-2">총 작성글</h3>
-          <p className="text-3xl font-bold">{myPosts.length}</p>
+          <p className="text-3xl font-bold">-</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
           <h3 className="text-lg font-semibold mb-2">최근 작성일</h3>
-          <p className="text-lg">
-            {myPosts.length > 0
-              ? new Date(myPosts[0].createdAt).toLocaleDateString()
-              : '작성한 글이 없습니다'}
-          </p>
+          <p className="text-lg">-</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
           <h3 className="text-lg font-semibold mb-2">계정 생성일</h3>
@@ -76,41 +59,7 @@ export default async function DashboardPage() {
       {/* 내가 쓴 글 목록 */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
         <h2 className="text-2xl font-bold mb-4">내가 쓴 글</h2>
-        {myPosts.length === 0 ? (
-          <p className="text-gray-600 dark:text-gray-400">
-            아직 작성한 글이 없습니다.
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {myPosts.map((post) => (
-              <div
-                key={post._id}
-                className="border dark:border-gray-700 rounded-lg p-4 flex justify-between items-start"
-              >
-                <div>
-                  <h3 className="text-xl font-semibold">{post.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    {post.description.length > 100
-                      ? `${post.description.substring(0, 100)}...`
-                      : post.description}
-                  </p>
-                  <div className="text-sm text-gray-500 mt-2">
-                    작성일: {new Date(post.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <RemoveBtn_Data id={post._id} />
-                  <Link href={`/editData/${post._id}`}>
-                    <HiPencilAlt
-                      size={24}
-                      className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                    />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <p className="text-gray-600 dark:text-gray-400">데이터가 없습니다.</p>
       </div>
     </div>
   )
