@@ -7,7 +7,7 @@ import { getToken } from 'next-auth/jwt'
 const SECRET = process.env.NEXTAUTH_SECRET!
 
 export async function GET(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({ req: request, secret: SECRET });
   if (!token || !token.id || !token.email) {
     return NextResponse.json({ message: '인증 필요' }, { status: 401 })
   }
