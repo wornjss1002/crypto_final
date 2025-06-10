@@ -16,8 +16,9 @@ type CapsuleType = {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { params } = context
   const token = await getToken({ req: request, secret: SECRET })
   if (!token) {
     return NextResponse.json({ message: '인증 필요' }, { status: 401 })
