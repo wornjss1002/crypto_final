@@ -17,7 +17,7 @@ interface CapsuleCardProps {
 export default function CapsuleCard({ capsule }: CapsuleCardProps) {
   const isSent = Boolean(capsule.recipientEmail)
   return (
-    <li className="border p-4 rounded-lg shadow-sm">
+    <div className="border p-4 rounded-lg shadow-sm">
       {isSent ? (
         <p>
           <strong>받는 사람:</strong> {capsule.recipientEmail}
@@ -38,6 +38,6 @@ export default function CapsuleCard({ capsule }: CapsuleCardProps) {
         <strong>작성일:</strong>{' '}
         {new Date(capsule.createdAt).toLocaleDateString()}
       </p>
-    </li>
+    </div>
   )
 }

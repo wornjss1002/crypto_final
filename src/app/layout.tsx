@@ -41,7 +41,7 @@ export default async function RootLayout({
         <NextAuthProvider session={session}>
           <Navbar />
           <div className="flex justify-between items-start gap-4">
-            <div className="flex-1 max-w-4xl mx-auto px-2 sm:px-0 lg:px-0 py-10">
+            <div className="flex-1  mx-auto px-2 sm:px-0 lg:px-0 py-10">
               <div className="space-y-8">
                 <main>
                   <div className="rounded-lg shadow-sm border border-gray-200 overflow-hidden">

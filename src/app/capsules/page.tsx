@@ -8,8 +8,8 @@ import { authOptions } from '@/auth'
 
 export default async function CapsulesPage() {
   const headersList = await headers()
-  const host =  headersList.get('host')
-  const cookie = headersList.get('cookie') || '';
+  const host = headersList.get('host')
+  const cookie = headersList.get('cookie') || ''
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
   const baseUrl = `${protocol}://${host}`
 
