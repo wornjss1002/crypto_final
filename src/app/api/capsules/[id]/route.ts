@@ -16,9 +16,9 @@ type CapsuleType = {
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { params } = context
+  const { id } = await params
   const token = await getToken({ req: request, secret: SECRET })
   if (!token) {
     return NextResponse.json({ message: '인증 필요' }, { status: 401 })
@@ -26,7 +26,7 @@ export async function GET(
 
   await dbConnect()
 
-  const capsule = await CapsuleModel.findById(params.id).lean<CapsuleType>()
+  const capsule = await CapsuleModel.findById(id).lean<CapsuleType>()
   if (!capsule) {
     return NextResponse.json(
       { message: '캡슐을 찾을 수 없습니다.' },
