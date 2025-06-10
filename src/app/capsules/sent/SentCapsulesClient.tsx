@@ -25,7 +25,7 @@ export default function SentCapsulesClient({
       startTransition(() => {
         router.refresh()
       })
-    } catch (e) {
+    } catch {
       alert('삭제 중 오류가 발생했습니다.')
     }
   }
@@ -36,16 +36,19 @@ export default function SentCapsulesClient({
       {sent.length > 0 ? (
         <div className="space-y-4">
           {sent.map((capsule: Capsule) => (
-            <div key={capsule._id} className="flex items-start gap-4">
-              <CapsuleCard capsule={capsule} />
-              <button
-                onClick={() => handleDelete(capsule._id)}
-                className="ml-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                disabled={isPending}
-              >
-                삭제
-              </button>
-            </div>
+            <CapsuleCard
+              key={capsule._id}
+              capsule={capsule}
+              deleteButton={
+                <button
+                  onClick={() => handleDelete(capsule._id)}
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  disabled={isPending}
+                >
+                  삭제
+                </button>
+              }
+            />
           ))}
         </div>
       ) : (

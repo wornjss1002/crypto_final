@@ -31,3 +31,9 @@ const mongooseSchema = new Schema<CapsuleType>(
 const CapsuleModel =
   models.Capsule || model<CapsuleType>('Capsule', mongooseSchema)
 export default CapsuleModel
+
+// Capsule 스키마에서 content(내용)는 평문(암호화X)으로 저장되고 있습니다.
+// 암호화/복호화 로직이 없으므로 DB에는 암호화되어 저장되지 않습니다.
+
+// senderId는 CapsuleSchema 및 Mongoose 스키마에서 string 타입으로 정의되어 있습니다.
+// 실제 저장 예시: senderId: '보내는사람의_이메일' 또는 '유저의_고유ID' 등 string 값

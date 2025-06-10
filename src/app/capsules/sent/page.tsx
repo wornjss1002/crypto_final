@@ -1,5 +1,5 @@
 import SentCapsulesClient from './SentCapsulesClient'
-import CapsuleCard, { Capsule } from '@/components/CapsuleCard'
+import { Capsule } from '@/components/CapsuleCard'
 import { headers } from 'next/headers'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/auth'

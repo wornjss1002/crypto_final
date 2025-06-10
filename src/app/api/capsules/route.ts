@@ -7,7 +7,7 @@ import { getToken } from 'next-auth/jwt'
 const SECRET = process.env.NEXTAUTH_SECRET!
 
 export async function GET(request: NextRequest) {
-  const token = await getToken({ req: request, secret: SECRET });
+  const token = await getToken({ req: request, secret: SECRET })
   if (!token || !token.id || !token.email) {
     return NextResponse.json({ message: '인증 필요' }, { status: 401 })
   }
@@ -17,10 +17,9 @@ export async function GET(request: NextRequest) {
 
     const sent = await CapsuleModel.find({ senderId: token.id })
 
-    const now = new Date()
+    // 모든 받은 캡슐을 반환 (공개일 조건 제거)
     const received = await CapsuleModel.find({
       recipientEmail: token.email,
-      viewDate: { $lte: now },
     })
 
     return NextResponse.json({ sent, received })
@@ -31,7 +30,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  })
 
   if (!token || !token.id || !token.email) {
     return NextResponse.json({ message: '인증 필요' }, { status: 401 })
