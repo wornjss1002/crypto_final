@@ -9,7 +9,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { data: session } = useSession()
+  // const { data: session } = useSession()
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
