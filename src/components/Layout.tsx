@@ -1,7 +1,6 @@
 // components/Layout.tsx
 'use client'
 import React, { ReactNode } from 'react'
-import { useSession } from 'next-auth/react'
 
 interface LayoutProps {
   children: ReactNode
