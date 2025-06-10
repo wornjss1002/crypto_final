@@ -1,9 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/auth'
 import Image from 'next/image'
-import Link from 'next/link'
-import { HiPencilAlt } from 'react-icons/hi'
-import RemoveBtn_Data from '@/components/RemoveBtn_Data'
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
