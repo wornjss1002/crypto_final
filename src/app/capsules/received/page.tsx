@@ -41,14 +41,11 @@ export default async function ReceivedCapsulesPage() {
       <h1 className="text-2xl font-bold mb-4">내게 도착한 캡슐</h1>
       {received.length > 0 ? (
         <div className="space-y-4">
-          {received.map((capsule: Capsule) => {
-            // 답장 버튼, 보낸 사람 정보 모두 제거
-            return (
-              <div key={capsule._id}>
-                <CapsuleCard capsule={capsule} />
-              </div>
-            )
-          })}
+          {received.map((capsule: Capsule) => (
+            <div key={capsule._id}>
+              <CapsuleCard capsule={{ ...capsule, content: '' }} />
+            </div>
+          ))}
         </div>
       ) : (
         <p className="text-gray-600">열람 가능한 캡슐이 없습니다.</p>

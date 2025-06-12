@@ -9,6 +9,7 @@ export default function NewCapsulePage() {
     recipientEmail: '',
     content: '',
     viewDate: '',
+    password: '', // 추가
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -24,7 +25,7 @@ export default function NewCapsulePage() {
     e.preventDefault()
 
     // 유효성 검사
-    const { recipientEmail, content, viewDate } = form
+    const { recipientEmail, content, viewDate, password } = form
     if (!recipientEmail || !content || !viewDate) {
       setError('모든 항목을 입력해주세요.')
       return
@@ -47,7 +48,12 @@ export default function NewCapsulePage() {
       const res = await fetch('/api/capsules', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          recipientEmail,
+          content,
+          viewDate,
+          password, // 반드시 포함
+        }),
         credentials: 'include',
       })
 
@@ -105,6 +111,19 @@ export default function NewCapsulePage() {
             onChange={handleChange}
             required
             className="mt-1 block w-full border border-gray-300 rounded p-2"
+          />
+        </label>
+
+        <label className="block mb-3">
+          <span className="text-gray-700">캡슐 비밀번호 (선택)</span>
+          <input
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            className="mt-1 block w-full border border-gray-300 rounded p-2"
+            placeholder="비밀번호 미입력 시 누구나 열람 가능"
+            autoComplete="new-password"
           />
         </label>
 

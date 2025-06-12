@@ -9,8 +9,13 @@ export const CapsuleSchema = z.object({
   content: z.string().min(1, '내용을 입력해주세요.'),
   viewDate: z.date(),
   createdAt: z.date().default(() => new Date()),
+  isEncrypted: z.boolean().optional(), // 추가
+  passwordHash: z.string().optional(), // 클라이언트 타입에서 제거 가능
 })
-export type CapsuleType = z.infer<typeof CapsuleSchema> & Document
+export type CapsuleType = z.infer<typeof CapsuleSchema> &
+  Document & {
+    passwordHash?: string
+  }
 
 // 2) Mongoose 스키마 정의
 const mongooseSchema = new Schema<CapsuleType>(
@@ -20,6 +25,8 @@ const mongooseSchema = new Schema<CapsuleType>(
     content: { type: String, required: true },
     viewDate: { type: Date, required: true },
     createdAt: { type: Date, default: () => new Date() },
+    isEncrypted: { type: Boolean, default: false }, // 추가
+    passwordHash: { type: String, required: false }, // DB에는 유지
   },
   {
     collection: 'capsules',

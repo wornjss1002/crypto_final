@@ -35,21 +35,23 @@ export default function SentCapsulesClient({
       <h1 className="text-2xl font-bold mb-4">내가 보낸 캡슐</h1>
       {sent.length > 0 ? (
         <div className="space-y-4">
-          {sent.map((capsule: Capsule) => (
-            <CapsuleCard
-              key={capsule._id}
-              capsule={capsule}
-              deleteButton={
-                <button
-                  onClick={() => handleDelete(capsule._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                  disabled={isPending}
-                >
-                  삭제
-                </button>
-              }
-            />
-          ))}
+          {sent.map((capsule: Capsule) => {
+            return (
+              <CapsuleCard
+                key={capsule._id}
+                capsule={capsule}
+                deleteButton={
+                  <button
+                    onClick={() => handleDelete(capsule._id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    disabled={isPending}
+                  >
+                    삭제
+                  </button>
+                }
+              />
+            )
+          })}
         </div>
       ) : (
         <p className="text-gray-600">보낸 캡슐이 없습니다.</p>

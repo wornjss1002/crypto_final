@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     await UserModel.create({
       name,
       email,
-      passwordHash,
+      passwordHash, // passwordHash로 저장
       createdAt: new Date(),
     })
 

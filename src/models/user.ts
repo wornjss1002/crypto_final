@@ -6,8 +6,7 @@ import { z } from 'zod'
 export const UserSchema = z.object({
   name: z.string().min(2, '이름은 최소 2자 이상이어야 합니다.'),
   email: z.string().email('유효한 이메일이어야 합니다.'),
-  passwordHash: z.string(),
-  // 기존 z.instanceof → z.date() 사용
+  passwordHash: z.string(), // password → passwordHash
   createdAt: z.date().default(() => new Date()),
 })
 
@@ -19,7 +18,7 @@ const mongooseSchema = new Schema<UserType>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    passwordHash: { type: String, required: true },
+    passwordHash: { type: String, required: true }, // password → passwordHash
     createdAt: { type: Date, default: () => new Date() },
   },
   { timestamps: false }

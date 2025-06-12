@@ -28,7 +28,11 @@ export async function POST(request: NextRequest) {
     }
 
     // 비밀번호 보안 검사
-    if (trimmedPassword.length < 8 || !/\d/.test(trimmedPassword) || !/[a-zA-Z]/.test(trimmedPassword)) {
+    if (
+      trimmedPassword.length < 8 ||
+      !/\d/.test(trimmedPassword) ||
+      !/[a-zA-Z]/.test(trimmedPassword)
+    ) {
       return NextResponse.json(
         { error: '비밀번호는 영문+숫자 포함 8자 이상이어야 합니다.' },
         { status: 400 }
@@ -53,7 +57,7 @@ export async function POST(request: NextRequest) {
     const user = await User.create({
       name: trimmedName,
       email: trimmedEmail,
-      password: hashedPassword,
+      passwordHash: hashedPassword, // password → passwordHash
       createdAt: new Date(),
     })
 

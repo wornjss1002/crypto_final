@@ -50,9 +50,17 @@ export default async function CapsulesPage() {
           <p className="text-gray-500">아직 보낸 캡슐이 없습니다.</p>
         ) : (
           <ul className="space-y-4">
-            {sent.map((c: Capsule) => (
-              <CapsuleCard key={c._id} capsule={c} />
-            ))}
+            {sent.map((c: Capsule) => {
+              return (
+                <CapsuleCard
+                  key={c._id}
+                  capsule={{
+                    ...c,
+                    content: c.content,
+                  }}
+                />
+              )
+            })}
           </ul>
         )}
       </section>
@@ -63,9 +71,17 @@ export default async function CapsulesPage() {
           <p className="text-gray-500">열람 가능한 캡슐이 없습니다.</p>
         ) : (
           <ul className="space-y-4">
-            {received.map((c: Capsule) => (
-              <CapsuleCard key={c._id} capsule={c} />
-            ))}
+            {received.map((c: Capsule) => {
+              return (
+                <CapsuleCard
+                  key={c._id}
+                  capsule={{
+                    ...c,
+                    content: c.passwordHash ? '' : c.content,
+                  }}
+                />
+              )
+            })}
           </ul>
         )}
       </section>
