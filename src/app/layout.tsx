@@ -18,7 +18,7 @@ const geistMono = localFont({
 })
 
 export const metadata: Metadata = {
-  title: '웹이추',
+  title: 'Time Capsule',
   description: 'Create, Read, Update, and Delete in MongoDB',
   icons: {
     icon: '/favicon.ico',
