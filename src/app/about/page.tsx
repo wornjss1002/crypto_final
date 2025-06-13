@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export default function AboutPage() {
   const members = [
     {
@@ -45,10 +47,13 @@ export default function AboutPage() {
             key={member.name}
           >
             <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 flex items-center justify-center mb-4 sm:mb-0 sm:mr-10 overflow-hidden bg-blue-100 rounded-md">
-              <img
+              <Image
                 src={member.photo}
                 alt={member.name}
+                width={128}
+                height={128}
                 className="object-cover w-full h-full"
+                priority
               />
             </div>
             <div className="text-center sm:text-left">
